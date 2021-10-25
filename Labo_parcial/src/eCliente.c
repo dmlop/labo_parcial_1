@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "eCliente.h"
+#include "eLocalidad.h"
 #include "biblioteca.h"
 /// @brief inicializa toda el vector con isEmpty=1
 ///
@@ -20,13 +21,13 @@ void ClienteInit(eCliente vector[],int tam){
 /// @param tam - tamaño del vector de clientes
 /// @param aux - auxiliar que guardara los datos ingresados por el usuario de forma momentanea
 /// @param id - puntero del contador de id que se le asignara al nuevo cliente.
-void AgregarCliente(eCliente vector[],int tam,eCliente aux,int* id){
+void AgregarCliente(eCliente vector[],int tam,eCliente auxC,int* id,eLocalidad vectorL[],int tamL,eLocalidad auxL,int* idL){
 	int cPasos;
 	cPasos=1;
 	do{
 		switch(cPasos){
 		case 1://NOMBRE EMPRESA
-			if(GetCharNombre(aux.nombreEmpresa, 51, "Ingrese el Nombre de la Empresa: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n",4)){
+			if(GetCharNombre(auxC.nombreEmpresa, 51, "Ingrese el Nombre de la Empresa: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n",4)){
 				cPasos++;
 			}
 			else{
@@ -35,7 +36,7 @@ void AgregarCliente(eCliente vector[],int tam,eCliente aux,int* id){
 			}
 			break;
 		case 2://CUIT
-			if(GetCharCuit(aux.cuit, 51, "Ingrese su CUIT: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n", 4)){
+			if(GetCharCuit(auxC.cuit, 51, "Ingrese su CUIT: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n", 4)){
 				cPasos++;
 			}
 			else{
@@ -43,7 +44,7 @@ void AgregarCliente(eCliente vector[],int tam,eCliente aux,int* id){
 			}
 			break;
 		case 3://DIRECCION
-			if(GetCharLNPC(aux.direccion, 51, "Ingrese la Direccion: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n", 4)){
+			if(GetCharLNPC(auxC.direccion, 51, "Ingrese la Direccion: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n", 4)){
 				cPasos++;
 			}
 			else{
@@ -51,7 +52,7 @@ void AgregarCliente(eCliente vector[],int tam,eCliente aux,int* id){
 			}
 			break;
 		case 4://LOCALIDAD
-			if(GetCharLNPC(aux.localidad, 51, "Ingrese la Localidad: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n", 4)){
+			if(GetCharLNPC(auxL.localidad, 51, "Ingrese la Localidad: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n", 4)){
 				cPasos++;
 			}
 			else{
@@ -65,10 +66,26 @@ void AgregarCliente(eCliente vector[],int tam,eCliente aux,int* id){
 
 
 	}while(cPasos!=5&&cPasos!=-1);
-	aux.id=*id;
-	aux.isEmpty=0;
+	auxC.id=*id;
+	auxC.isEmpty=0;
 
-	if(CargarCliente(vector,tam,aux)==-1||cPasos==-1){
+	for(int i=0;i<tamL;i++){
+		if(vectorL[i].isEmpty==0&&strcmp(auxL.localidad,vectorL[i].localidad)==0){
+			auxC.idL=vectorL[i].id;
+			break;
+		}
+		else{
+			if(vectorL[i].isEmpty==1){
+				vectorL[i].id=*idL;
+				vectorL[i].isEmpty=0;
+				strncpy(vectorL[i].localidad,auxL.localidad,51);
+				auxC.idL=vectorL[i].id;
+				*idL=*idL+1;
+			}
+		}
+	}
+
+	if(CargarCliente(vector,tam,auxC)==-1||cPasos==-1){
 		printf("===NO=SE=PUDO=CARGAR=CLIENTE===\n");
 	}
 	else{
@@ -94,7 +111,7 @@ int CargarCliente(eCliente vector[],int tam,eCliente aux){
 		strncpy(vector[posicion].nombreEmpresa,aux.nombreEmpresa,sizeof(vector[posicion].nombreEmpresa));
 		strncpy(vector[posicion].cuit,aux.cuit,sizeof(vector[posicion].cuit));
 		strncpy(vector[posicion].direccion,aux.direccion,sizeof(vector[posicion].direccion));
-		strncpy(vector[posicion].localidad,aux.localidad,sizeof(vector[posicion].localidad));
+		vector[posicion].idL=aux.idL;
 		vector[posicion].isEmpty=0;
 	}
 	return posicion;
@@ -164,7 +181,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[0].nombreEmpresa,"Marolio",51);
 		strncpy(vector[0].cuit,"12-34940336-8",15);
 		strncpy(vector[0].direccion,"Cantinfla 220",51);
-		strncpy(vector[0].localidad,"avellaneda",51);
+		vector[0].idL=1;
 		*id=*id+1;
 		*altas=*altas+1;
 
@@ -173,7 +190,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[1].nombreEmpresa,"HellsMans",51);
 		strncpy(vector[1].cuit,"12-34231336-8",15);
 		strncpy(vector[1].direccion,"cervantes 1220",51);
-		strncpy(vector[1].localidad,"Gerli",51);
+		vector[1].idL=1;
 		*id=*id+1;
 		*altas=*altas+1;
 
@@ -182,7 +199,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[2].nombreEmpresa,"Danica",51);
 		strncpy(vector[2].cuit,"12-33240336-8",15);
 		strncpy(vector[2].direccion,"Lafayette 720",51);
-		strncpy(vector[2].localidad,"Crucezita",51);
+		vector[2].idL=2;
 		*id=*id+1;
 		*altas=*altas+1;
 
@@ -191,7 +208,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[3].nombreEmpresa,"CocaCola",51);
 		strncpy(vector[3].cuit,"12-34979826-8",15);
 		strncpy(vector[3].direccion,"Lagos 1997",51);
-		strncpy(vector[3].localidad,"Barracas",51);
+		vector[3].idL=3;
 		*id=*id+1;
 		*altas=*altas+1;
 
@@ -200,7 +217,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[4].nombreEmpresa,"Pepsi",51);
 		strncpy(vector[4].cuit,"12-11140336-8",15);
 		strncpy(vector[4].direccion,"Burruchaga 220",51);
-		strncpy(vector[4].localidad,"Wilde",51);
+		vector[4].idL=3;
 		*id=*id+1;
 		*altas=*altas+1;
 
@@ -209,7 +226,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[5].nombreEmpresa,"Manaos",51);
 		strncpy(vector[5].cuit,"12-10940336-8",15);
 		strncpy(vector[5].direccion,"La Carra 220",51);
-		strncpy(vector[5].localidad,"Lanus",51);
+		vector[5].idL=3;
 		*id=*id+1;
 		*altas=*altas+1;
 
@@ -218,7 +235,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[6].nombreEmpresa,"Felizia",51);
 		strncpy(vector[6].cuit,"12-34232136-8",15);
 		strncpy(vector[6].direccion,"Italia 20",51);
-		strncpy(vector[6].localidad,"Avellaneda",51);
+		vector[6].idL=4;
 		*id=*id+1;
 		*altas=*altas+1;
 
@@ -227,7 +244,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[7].nombreEmpresa,"La Compostela",51);
 		strncpy(vector[7].cuit,"22-76543336-8",15);
 		strncpy(vector[7].direccion,"La Trota 1098",51);
-		strncpy(vector[7].localidad,"Lanus",51);
+		vector[7].idL=4;
 		*id=*id+1;
 		*altas=*altas+1;
 
@@ -236,7 +253,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[8].nombreEmpresa,"Cunninton",51);
 		strncpy(vector[8].cuit,"12-34978954-1",15);
 		strncpy(vector[8].direccion,"Puerredon 501",51);
-		strncpy(vector[8].localidad,"Wilde",51);
+		vector[8].idL=3;
 		*id=*id+1;
 		*altas=*altas+1;
 
@@ -245,7 +262,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[9].nombreEmpresa,"Paladini",51);
 		strncpy(vector[9].cuit,"12-34999886-8",15);
 		strncpy(vector[9].direccion,"San Martin 1235",51);
-		strncpy(vector[9].localidad,"Gerli",51);
+		vector[9].idL=4;
 		*id=*id+1;
 		*altas=*altas+1;
 
@@ -254,8 +271,9 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[10].nombreEmpresa,"Calchaqui",51);
 		strncpy(vector[10].cuit,"14-34440336-8",15);
 		strncpy(vector[10].direccion,"Sarmiento 9281",51);
-		strncpy(vector[10].localidad,"Barracas",51);
+		vector[10].idL=5;
 		*id=*id+1;
+
 		*altas=*altas+1;
 
 		vector[11].id=*id;
@@ -263,7 +281,7 @@ void ClientesTesteo(eCliente vector[],int *id,int* altas,int actividad){
 		strncpy(vector[11].nombreEmpresa,"Vienisima",51);
 		strncpy(vector[11].cuit,"12-34123336-8",15);
 		strncpy(vector[11].direccion,"Rotta 9478",51);
-		strncpy(vector[11].localidad,"Avellaneda",51);
+		vector[11].idL=5;
 		*id=*id+1;
 		*altas=*altas+1;
 	}

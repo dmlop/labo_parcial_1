@@ -47,9 +47,12 @@ void MenuInformes(int*pOpcion){
 	printf("||3.Imprimir Pedidos procesados.\n");
 	printf("||4.Imprimir Pedidos por Localidad.\n");
 	printf("||5.Imprimir polipropileno reciclado.\n");
-	printf("||6.Volver.\n");
+	printf("||6.Imprimir Cliente mas pedidos pendientes.\n");
+	printf("||7.Imprimir Cliente mas pedidos completados.\n");
+	printf("||8.Imprimir Cliente mas pedidos.\n");
+	printf("||9.Volver.\n");
 	printf("=======================================\n");
 
-	GetIntRango(pOpcion,"Ingrese el numero de la opcion deseada: ","ERROR! NUMERO INVALIDO!\n",1,6,99);
+	GetIntRango(pOpcion,"Ingrese el numero de la opcion deseada: ","ERROR! NUMERO INVALIDO!\n",1,9,99);
 }
 

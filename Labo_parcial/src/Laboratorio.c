@@ -40,6 +40,7 @@ localidad.
 #include "eCliente.h"
 #include "ePedidos.h"
 #include "informes.h"
+#include "eLocalidad.h"
 #include "menu.h"
 
 int main(void) {
@@ -49,6 +50,7 @@ int main(void) {
 	int opcionMenuInformes;
 	int idCliente;
 	int idPedido;
+	int idLocalidad;
 	int auxPos;
 	int auxId;
 	int altas;
@@ -57,11 +59,15 @@ int main(void) {
 	eCliente auxCliente;
 	ePedidos listPedidos[1000];
 	ePedidos auxPedido;
+	eLocalidad listLocalidad[100];
+	eLocalidad auxLocalidad;
 	idCliente=1;
 	idPedido=1;
+	idLocalidad=1;
 	altas=0;
 	ClienteInit(listCliente,100);
 	PedidosInit(listPedidos,1000);
+	LocalidadInit(listLocalidad,100);
 
 	ClientesTesteo(listCliente,&idCliente,&altas,1);
 	PedidosTesteo(listPedidos,&idPedido,1);
@@ -73,7 +79,7 @@ int main(void) {
 		case 1://ALTA CLIENTE
 			system("cls");
 			if(altas!=100){
-				AgregarCliente(listCliente,100,auxCliente,&idCliente);
+				AgregarCliente(listCliente,100,auxCliente,&idCliente,listLocalidad,100,auxLocalidad,&idLocalidad);
 				altas++;
 			}
 			else{
@@ -96,8 +102,22 @@ int main(void) {
 					}
 					break;
 				case 2:
-					if(GetCharLNPC(auxCliente.localidad, 51, "Ingrese la Nueva Localidad de la Empresa: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n",4)){
-						strncpy(listCliente[auxPos].localidad,auxCliente.localidad,sizeof(listCliente[auxPos].localidad));
+					if(GetCharLNPC(auxLocalidad.localidad, 51, "Ingrese la Nueva Localidad de la Empresa: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n",4)){
+						for(int i=0;i<100;i++){
+							if(listLocalidad[i].isEmpty==0&&strcmp(auxLocalidad.localidad,listLocalidad[i].localidad)){
+								listCliente[auxPos].idL=listLocalidad[i].id;
+								break;
+							}
+							else{
+								if(listLocalidad[i].isEmpty==1){
+									listLocalidad[i].id=idLocalidad;
+									listLocalidad[i].isEmpty=0;
+									strncpy(listLocalidad[i].localidad,auxLocalidad.localidad,51);
+									listCliente[auxPos].idL=listLocalidad[i].id;
+									idLocalidad++;
+								}
+							}
+						}
 					}
 					else{
 						printf("\nERROR CODE 1\n");
@@ -203,7 +223,7 @@ int main(void) {
 					break;
 				case 4://IMPRIMIR PEDIDOS PENDIENTES POR LOCALIDAD
 					system("cls");
-					if(PedidosPendientesPorLocalidad(listCliente, 100,listPedidos, 1000)==0){
+					if(PedidosPendientesPorLocalidad(listCliente, 100,listPedidos, 1000,listLocalidad,100)==0){
 						printf("=NO=HAY=PEDIDOS=PENDIENTES=\n");
 					}
 					break;
@@ -213,11 +233,29 @@ int main(void) {
 						printf("=NO=HAY=PEDIDOS=PROCESADOS=\n");
 					}
 					break;
-				case 6://VOLVER
+				case 6://ClienteMasPedidosPendientes
 					system("cls");
+					if(ClienteMasPedidosPendientes(listCliente, 100,listPedidos, 1000)==0){
+						printf("=NO=HAY=PEDIDOS=PROCESADOS=\n");
+					}
+					break;
+				case 7://ClienteMasPedidosCompletados
+					system("cls");
+					if(ClienteMasPedidosCompletados(listCliente, 100,listPedidos, 1000)==0){
+						printf("=NO=HAY=PEDIDOS=PROCESADOS=\n");
+					}
+					break;
+				case 8://ClienteMasPedidos
+					if(ClienteMasPedidos(listCliente, 100,listPedidos, 1000)==0){
+						printf("=NO=HAY=PEDIDOS=PROCESADOS=\n");
+					}
+					break;
+				case 9:
+					break;
+				case 10:
 					break;
 			}
-			}while(opcionMenuInformes!=6);
+			}while(opcionMenuInformes!=9);
 			break;
 		case 7://FIN PROGRAMA
 			system("cls");

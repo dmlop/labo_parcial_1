@@ -3,6 +3,7 @@
 #ifndef EPEDIDOS_H_
 #define EPEDIDOS_H_
 #include "eCliente.h"
+#include "eLocalidad.h"
 
 typedef struct{
 	int id;

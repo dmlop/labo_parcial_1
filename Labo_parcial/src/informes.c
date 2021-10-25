@@ -3,6 +3,8 @@
 #include "biblioteca.h"
 #include "ePedidos.h"
 #include "eCliente.h"
+#include "eLocalidad.h"
+#include "eContador.h"
 #include <string.h>
 /// @brief imprime los datos de los clientes con pedidos
 /// 		pendientes y la cantidad de pedidos pendientes
@@ -12,7 +14,7 @@
 /// @param listC
 /// @param tamC
 /// @return
-int ImprimirClientesYPedidos(ePedidos listP[],int tamP,eCliente listC[],int tamC){
+int ImprimirClientesYPedidos(ePedidos listP[],int tamP,eCliente listC[],int tamC,eLocalidad listL[],int tamL){
 	int retorno;
 	int cPendiente;
 	retorno=0;
@@ -25,11 +27,16 @@ int ImprimirClientesYPedidos(ePedidos listP[],int tamP,eCliente listC[],int tamC
 					cPendiente++;
 				}
 			}
-			printf("  %-2d  %-16s  %-16s  %-16s  %-15s  %-2d\n",listC[i].id,
+			for(int k=0;k<tamL;k++){
+				if(listC[i].idL==listL[k].id){
+					printf("  %-2d  %-16s  %-16s  %-16s  %-15s  %-2d\n",listC[i].id,
 					listC[i].nombreEmpresa,listC[i].cuit,
-					listC[i].direccion,listC[i].localidad,cPendiente);
-			cPendiente=0;
-			retorno=1;
+					listC[i].direccion,listL[k].localidad,cPendiente);
+					cPendiente=0;
+					retorno=1;
+				}
+			}
+
 		}
 	}
 	printf("===================================================================================\n");
@@ -83,8 +90,6 @@ int ImprimirPedidosProcesados(ePedidos listP[],int tamP,eCliente listC[],int tam
 			}
 		}
 	}
-
-
 	return retorno;
 }
 /// @brief pide al usuario que ingrese una localidad y
@@ -95,7 +100,7 @@ int ImprimirPedidosProcesados(ePedidos listP[],int tamP,eCliente listC[],int tam
 /// @param listP
 /// @param tamP
 /// @return
-int PedidosPendientesPorLocalidad(eCliente listC[],int tamC,ePedidos listP[],int tamP){
+int PedidosPendientesPorLocalidad(eCliente listC[],int tamC,ePedidos listP[],int tamP,eLocalidad listL[],int tamL){
 	int retorno;
 	char localidad[20];
 	int contador;
@@ -104,11 +109,12 @@ int PedidosPendientesPorLocalidad(eCliente listC[],int tamC,ePedidos listP[],int
 
 	if(GetCharLNPC(localidad, 20, "ingrese una Localidad: ","ERROR DATO INVALIDO! VUELVA A INTENTARLO!\n", 4)){
 		for(int i=0;i<tamC;i++){
-			if(listC[i].isEmpty==0&&strcmp(listC[i].localidad,localidad)==0){
-				for(int j=0;j<tamP;j++){
-					if(listC[i].id==listP[j].idC&&listP[j].estado==0){
-						contador++;
-						retorno=1;
+			for(int k=0;k<tamL;k++){
+				if(listC[i].idL==listL[k].id&&strcmp(listL[k].localidad,localidad)==0){
+					for(int j=0;j<tamP;j++){
+						if(listC[i].id==listP[j].idC&&listP[j].estado==0){
+							contador++;
+							retorno=1;
 					}
 				}
 			}
@@ -167,4 +173,81 @@ int PromedioPP(ePedidos listP[],int tamP,eCliente listC[],int tamC){
 	}
 	return retorno;
 }
+int ClienteMasPedidosPendientes(eCliente vectorC[],int tamC,ePedidos vectorP[],int tam){
+	int retorno;
+	eContador cPedidos[100];
+	for(int c=0;c<100;c++){
+		cPedidos[c].id=-1;
+	}
 
+	for(int i=0;i<tamC;i++){
+		for(int j=0;j<tamP;j++){
+			if(vectorC[i].id==vectorP[j].idC&&vectorP[j].estado==0){
+				cPedidos[i].contador++;
+				cPedidos[i].id=vectorC[i].id;
+			}
+		}
+	}
+	for(int p=0;p<tamC;p++){
+		for(int u=0;u<100;u++){
+			if(vectorC[p].id==cPedidos[u].id){
+				printf("%s -- %d",vectorC[p].nombreEmpresa,cPedidos[u].contador);
+			}
+		}
+	}
+
+	retorno=0;
+	return retorno;
+}
+int ClienteMasPedidosCompletados(eCliente vectorC[],int tamC,ePedidos vectorP[],int tam){
+	int retorno;
+	eContador cPedidos[100];
+	for(int c=0;c<100;c++){
+		cPedidos[c].id=-1;
+	}
+
+	for(int i=0;i<tamC;i++){
+		for(int j=0;j<tamP;j++){
+			if(vectorC[i].id==vectorP[j].idC&&vectorP[j].estado==0){
+				cPedidos[i].contador++;
+				cPedidos[i].id=vectorC[i].id;
+			}
+		}
+	}
+	for(int p=0;p<tamC;p++){
+		for(int u=0;u<100;u++){
+			if(vectorC[p].id==cPedidos[u].id){
+				printf("%s -- %d",vectorC[p].nombreEmpresa,cPedidos[u].contador);
+			}
+		}
+	}
+
+	retorno=0;
+	return retorno;
+}
+int ClienteMasPedidos(eCliente vectorC[],int tamC,ePedidos vectorP[],int tam){
+	int retorno;
+	eContador cPedidos[100];
+	for(int c=0;c<100;c++){
+		cPedidos[c].id=-1;
+	}
+
+	for(int i=0;i<tamC;i++){
+		for(int j=0;j<tamP;j++){
+			if(vectorC[i].id==vectorP[j].idC){
+				cPedidos[i].contador++;
+				cPedidos[i].id=vectorC[i].id;
+			}
+		}
+	}
+	for(int p=0;p<tamC;p++){
+		for(int u=0;u<100;u++){
+			if(vectorC[p].id==cPedidos[u].id){
+				printf("%s -- %d",vectorC[p].nombreEmpresa,cPedidos[u].contador);
+			}
+		}
+	}
+
+	retorno=0;
+	return retorno;
+}
